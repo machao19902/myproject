@@ -1,0 +1,6 @@
+pbr<2.0,>=0.11
+pecan>=0.8.0
+WSME>=0.8
+alembic>=0.8.0
+stevedore>=1.5.0 # Apache-2.0
+SQLAlchemy!=1.1.5,!=1.1.6,!=1.1.7,!=1.1.8,>=1.0.10 # MIT
