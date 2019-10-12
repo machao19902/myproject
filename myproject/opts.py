@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import myproject.api
-# import myproject.db
+import myproject.cmd.polling
 
 def list_opts():
     return [
         ('api', myproject.api.OPTS),
-        # ('database', myproject.db.OPTS),
+        ('polling', myproject.cmd.polling.OPTS),
     ]
+
