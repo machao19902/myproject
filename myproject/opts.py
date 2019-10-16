@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import socket
+
 from oslo_config import cfg
 
 def list_opts():
@@ -30,6 +32,14 @@ def list_opts():
                         help='topic list'),
             cfg.IntOpt('workers',
                        default=1,
-                       help='number of worker')])
+                       help='number of worker')]),
+        ('rpc', [
+            cfg.StrOpt('topic',
+                       default='myproject.rpc',
+                       help='rpc topic'),
+            cfg.StrOpt('host',
+                       default=socket.gethostname(),
+                       help='name of this node which '
+                            'must be correct in AMQP key')])
     ]
 

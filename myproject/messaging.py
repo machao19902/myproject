@@ -32,24 +32,19 @@ def get_transport(url=None, optional=False, cache=True):
     return transport
 
 
-def get_rpc_server(transport, topic, endpoint):
+def get_rpc_server(transport, topic, endpoint, host):
     """Return a configured oslo_messaging rpc server."""
-    cfg.CONF.import_opt('host', 'ceilometer.service')
-    target = oslo_messaging.Target(server=cfg.CONF.host, topic=topic)
-    serializer = oslo_serializer.RequestContextSerializer(
-        oslo_serializer.JsonPayloadSerializer())
+    target = oslo_messaging.Target(server=host, topic=topic)
     return oslo_messaging.get_rpc_server(transport, target,
                                          [endpoint], executor='threading',
-                                         serializer=serializer)
+                                         serializer=_SERIALIZER)
 
 
 def get_rpc_client(transport, retry=None, **kwargs):
     """Return a configured oslo_messaging RPCClient."""
     target = oslo_messaging.Target(**kwargs)
-    serializer = oslo_serializer.RequestContextSerializer(
-        oslo_serializer.JsonPayloadSerializer())
     return oslo_messaging.RPCClient(transport, target,
-                                    serializer=serializer,
+                                    serializer=_SERIALIZER,
                                     retry=retry)
 
 

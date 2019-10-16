@@ -10,6 +10,7 @@ import oslo_messaging
 import six
 
 from myproject import messaging
+from myproject import rpc
 
 LOG = log.getLogger(__name__)
 
@@ -45,7 +46,9 @@ class SkyService(cotyledon.Service):
         self.targets = None
         self.endpoints = None
         self.listener = None
-        self.rpc_server = None
+        self.rpcServer = None
+        # TODO(), use real rpc manager
+        self.rpcManager = rpc.getRpcManager('fibonacci')
 
     def getTransport(self):
         if not self.transport:
@@ -115,6 +118,21 @@ class SkyService(cotyledon.Service):
         )
         self.listener.start(override_pool_size=1)
 
+    def startRpcServer(self):
+        try:
+            transport = self.getTransport()
+            topic = self.conf.rpc.topic
+            endpoint = self.rpcManager
+            host = self.conf.rpc.host
+            self.rpcServer = messaging.get_rpc_server(transport, topic, endpoint, host)
+            self.rpcServer.start()
+        except Exception as ex:
+            info = 'init rpc server exception: {expe}, message: {mess}'.format(
+                expe=ex.__class__.__name__,
+                mess=ex
+            )
+            LOG.info(info)
+
     def run(self):
         try:
             self.startListener()
@@ -124,3 +142,4 @@ class SkyService(cotyledon.Service):
                    "message: {message}".format(exception=ex.__class__.__name__,
                                                message=ex)
             LOG.error(info)
+        self.startRpcServer()
